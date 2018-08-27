@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/supme/service/internal/email"
+	"github.com/supme/service/internal/phone"
 	"github.com/supme/service/internal/translit"
 	"github.com/supme/service/proto"
 	"google.golang.org/grpc"
@@ -50,7 +51,8 @@ func main() {
 	server := grpc.NewServer()
 
 	proto.RegisterTransliterationServer(server, translit.NewTr())
-	proto.RegisterEmailServer(server, email.NewValidator(50, 30))
+	proto.RegisterEmailServer(server, email.NewValidator(100, 3600))
+	proto.RegisterPhoneServer(server, phone.NewValidator())
 
 	log.Printf("starting server at %s", listenAddress)
 	log.Fatal(server.Serve(l))

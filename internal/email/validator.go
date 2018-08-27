@@ -72,12 +72,12 @@ func (e *Validator) validate(email string) (string, proto.EmailValidateError) {
 		eml = strings.ToLower(strings.TrimSpace(m[1]))
 		domain = strings.TrimRight(strings.ToLower(strings.TrimSpace(m[2])), ".")
 	} else {
-		return "", proto.EmailValidateError_BAD_EMAIL_FORMAT
+		return "", proto.EmailValidateError_BAD_FORMAT
 	}
 
 	punycode, err := idna.ToASCII(domain)
 	if err != nil {
-		return "", proto.EmailValidateError_BAD_EMAIL_FORMAT
+		return "", proto.EmailValidateError_BAD_FORMAT
 	}
 
 	canonicalizeEmail := strings.ToLower(eml + "@" + domain)

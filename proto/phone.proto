@@ -3,29 +3,27 @@ syntax = "proto3";
 package proto;
 
 // The email service definition.
-service Email {
+service Phone {
   // Validate email
-  rpc Validate (EmailValidateRequest) returns (EmailValidateReply) {}
+  rpc Validate (PhoneValidateRequest) returns (PhoneValidateReply) {}
   // Stream validate email
-  rpc StreamValidate (stream EmailValidateRequest) returns (stream EmailValidateReply) {}
+  rpc StreamValidate (stream PhoneValidateRequest) returns (stream PhoneValidateReply) {}
 }
 
-enum EmailValidateError {
+enum PhoneValidateError {
   NO_ERROR = 0;
   OTHER_ERROR = 1;
   BAD_FORMAT = 2;
-  HOST_DOES_NOT_HAVE_MX = 3;
-  MX_HOST_IN_RESERVED_IP_RANGE = 4;
 }
 
-message EmailValidateRequest {
+message PhoneValidateRequest {
   string id = 1; // any you id for identificate email, return as is in responce
   string email = 2; // email for validate
 }
 
-message EmailValidateReply {
+message PhoneValidateReply {
   string id = 1; // you id from request
   bool valid = 2;
   string canonical = 3; // email in lowercase and strip spaces
-  EmailValidateError error = 4;
+  PhoneValidateError error = 4;
 }
