@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package proto;
+
+// The email service definition.
+service Email {
+  // Validate email
+  rpc Validate (EmailValidateRequest) returns (EmailValidateReply) {}
+//  // Bulk validate email
+//  rpc BulkValidate (BulkEmailValidateRequest) returns (BulkEmailValidateReply) {}
+  // Stream validate email
+  rpc StreamValidate (stream EmailValidateRequest) returns (stream EmailValidateReply) {}
+}
+
+enum EmailValidateError {
+  NO_ERROR = 0;
+  OTHER_ERROR = 1;
+  BAD_EMAIL_FORMAT = 2;
+  HOST_DOES_NOT_HAVE_MX = 3;
+  MX_HOST_IN_RESERVED_IP_RANGE = 4;
+}
+
+message EmailValidateRequest {
+  string id = 1; // any you id for identificate email, return as is in responce
+  string email = 2; // email for validate
+}
+
+//message BulkEmailValidateRequest {
+//  repeated EmailValidateRequest emails = 1;
+//}
+
+message EmailValidateReply {
+  string id = 1; // you id from request
+  bool valid = 2;
+  string canonical = 3; // email in lowercase and strip spaces
+  EmailValidateError error = 4;
+}
+
+//message BulkEmailValidateReply {
+//  repeated EmailValidateReply results = 1;
+//}
