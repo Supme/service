@@ -4,26 +4,31 @@ package proto;
 
 // The email service definition.
 service Phone {
-  // Validate email
+  // Validate phone
   rpc Validate (PhoneValidateRequest) returns (PhoneValidateReply) {}
-  // Stream validate email
+  // Stream validate phone
   rpc StreamValidate (stream PhoneValidateRequest) returns (stream PhoneValidateReply) {}
 }
 
 enum PhoneValidateError {
   NO_ERROR = 0;
   OTHER_ERROR = 1;
-  BAD_FORMAT = 2;
+  DONT_KNOW_COUNTRY_CODE = 2;
+  DONT_KNOW_PHONE = 3;
+  WRONG_LENGHT_NUMBER = 4;
+  CODE_NOT_FOUND_FOR_RUSSIAN_DATABASE = 5;
+  NUMBER_NOT_FOUND_IN_CODE_RANGE_FOR_RUSSIAN_DATABASE = 6;
 }
 
 message PhoneValidateRequest {
-  string id = 1; // any you id for identificate email, return as is in responce
-  string email = 2; // email for validate
+  string id = 1; // any you id for identificate phone, return as is in responce
+  string number = 2; // number for validate
 }
 
 message PhoneValidateReply {
   string id = 1; // you id from request
   bool valid = 2;
-  string canonical = 3; // email in lowercase and strip spaces
-  PhoneValidateError error = 4;
+  string canonical = 3;
+  string provider = 4;
+  PhoneValidateError error = 5;
 }

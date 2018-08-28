@@ -44,6 +44,10 @@
   packages = [
     "collate",
     "collate/build",
+    "encoding",
+    "encoding/charmap",
+    "encoding/internal",
+    "encoding/internal/identifier",
     "internal/colltab",
     "internal/gen",
     "internal/tag",
@@ -102,6 +106,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fe9b8e39e79292ba4eadc194a3ecad5071024215326ecde8ce91423010711d28"
+  inputs-digest = "45204b2937fd94148cffccd660de49e2bf9cf1d4ef8581ec9a5fb16dcbb49282"
   solver-name = "gps-cdcl"
   solver-version = 1
