@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Example validator</title>
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body>
+<!--Phone validator-->
+<form class="form-horizontal" autocomplete="off">
+    <fieldset>
+
+        <!-- Form Name -->
+        <legend>Phone validator</legend>
+
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="single_phone">Single phone validate</label>
+            <div class="col-md-6">
+                <input id="single_phone" name="single_phone" type="text" placeholder="+71234567890" class="form-control input-md">
+                <span id="single_phone_help" class="help-block">you phone number for validate</span>
+            </div>
+        </div>
+
+        <!-- File Button
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="phone_file">File stream validate</label>
+            <div class="col-md-4">
+                <input id="phone_file" name="phone_file" class="input-file" type="file">
+            </div>
+        </div>
+        -->
+
+    </fieldset>
+</form>
+
+<!--Email validator-->
+<form class="form-horizontal"  autocomplete="off">
+    <fieldset>
+
+        <!-- Form Name -->
+        <legend>Email validator</legend>
+
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="single_email">Single email validate</label>
+            <div class="col-md-6">
+                <input id="single_email" name="single_email" type="text" placeholder="test@domain.tld" class="form-control input-md">
+                <span id="single_email_help" class="help-block">you emailr for validate</span>
+            </div>
+        </div>
+
+        <!-- File Button
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="email_file">File stream validate</label>
+            <div class="col-md-4">
+                <input id="email_file" name="email_file" class="input-file" type="file">
+            </div>
+        </div>
+        -->
+
+    </fieldset>
+</form>
+
+<script language="JavaScript">
+    $('#single_phone').keyup(function (e){
+        phoneValidate();
+    });
+    function phoneValidate() {
+        var num = $('#single_phone').val();
+        $.ajax({
+            dataType: "json",
+            url: "/phone/single",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({id: "", number: num}),
+            complete: function(r) {
+                res = r.responseJSON;
+                switch(res.error)
+                {
+                    case 1:
+                        res.errorString = "OTHER_ERROR";
+                        break;
+                    case 2:
+                        res.errorString = "DONT_KNOW_COUNTRY_CODE";
+                        break;
+                    case 3:
+                        res.errorString = "DONT_KNOW_PHONE";
+                        break;
+                    case 4:
+                        res.errorString = "WRONG_LENGHT_NUMBER";
+                        break;
+                    case 5:
+                        res.errorString = "CODE_NOT_FOUND_FOR_RUSSIAN_DATABASE";
+                        break;
+                    case 6:
+                        res.errorString = "NUMBER_NOT_FOUND_IN_CODE_RANGE_FOR_RUSSIAN_DATABASE";
+                        break;
+                    case undefined:
+                        res.errorString = "NO_ERROR";
+                        break;
+                    default:
+                        res.errorString = "UNKNOWN_ERROR";
+                }
+                console.log(res);
+                let err = res.errorString === undefined?"":res.errorString;
+                let provider = res.provider === undefined?"":res.provider;
+                let valid = res.valid === undefined?false:res.valid;
+                let canonical = res.canonical === undefined?"":res.canonical;
+                $('#single_phone_help').text("Valid: '"+ valid + "' Canonical: '" + canonical + "' Error: '" + err + "' Provider: '" + provider + "'");
+                return res;
+            }
+        });
+    }
+
+    $('#single_email').keyup(function (e){
+        emailValidate();
+    });
+    function emailValidate() {
+        var email = $('#single_email').val();
+        $.ajax({
+            dataType: "json",
+            url: "/email/single",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({id: "", email: email}),
+            complete: function(r) {
+                res = r.responseJSON;
+                switch(res.error)
+                {
+                    case 1:
+                        res.errorString = "OTHER_ERROR";
+                        break;
+                    case 2:
+                        res.errorString = "BAD_FORMAT";
+                        break;
+                    case 3:
+                        res.errorString = "HOST_DOES_NOT_HAVE_MX";
+                        break;
+                    case 4:
+                        res.errorString = "MX_HOST_IN_RESERVED_IP_RANGE";
+                        break;
+                    case undefined:
+                        res.errorString = "NO_ERROR";
+                        break;
+                    default:
+                        res.errorString = "UNKNOWN_ERROR";
+                }
+                console.log(res);
+                let err = res.errorString === undefined?"":res.errorString;
+                let valid = res.valid === undefined?false:res.valid;
+                let canonical = res.canonical === undefined?"":res.canonical;
+                $('#single_email_help').text("Valid: '"+ valid + "' Canonical: '" + canonical + "' Error: '" + err + "'");
+                return res;
+            }
+        });
+
+    }
+</script>
+
+</body>
+</html>

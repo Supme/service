@@ -122,6 +122,9 @@ func (v *Validator) check(number string) (string, string, error) {
 			num = append(num, rune(number[i]))
 		}
 	}
+	if len(num) < 10 {
+		return "", "", errWrongLenghtNumber
+	}
 	// Russia default country
 	if len(num) == 10 {
 		return v.ruBase.find(num)
