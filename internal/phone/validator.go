@@ -56,15 +56,63 @@ func NewValidator() (*Validator, error) {
 }
 
 func (v *Validator) StreamValidate(in proto.Phone_StreamValidateServer) error {
+	for {
+		r, err := in.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Println(err)
+		}
+		s, err := v.Validate(in.Context(), r)
+		err = in.Send(s)
+		if err != nil {
+			log.Println(err)
+		}
+	}
 	return nil
 }
 
 func (v *Validator) Validate(ctx context.Context, in *proto.PhoneValidateRequest) (*proto.PhoneValidateReply, error) {
-	return &proto.PhoneValidateReply{}, nil
+	valid := false
+	canonnical, provider, err := v.check(in.Number)
+	if err == nil {
+		valid = true
+	}
+	return &proto.PhoneValidateReply{
+		Id:        in.Id,
+		Valid:     valid,
+		Canonical: canonnical,
+		Provider:  provider,
+		Error:     phoneErrorToProtoError(err),
+	}, nil
+}
+
+func phoneErrorToProtoError(err error) proto.PhoneValidateError {
+	switch err {
+	case nil:
+		return proto.PhoneValidateError_NO_ERROR
+	case errDontKnowCountryCode:
+		return proto.PhoneValidateError_DONT_KNOW_COUNTRY_CODE
+	case errDontKnowPhone:
+		return proto.PhoneValidateError_DONT_KNOW_PHONE
+	case errWrongLenghtNumber:
+		return proto.PhoneValidateError_WRONG_LENGHT_NUMBER
+	case errCodeNotFoundForRussianDatabase:
+		return proto.PhoneValidateError_CODE_NOT_FOUND_FOR_RUSSIAN_DATABASE
+	case errNumberNotFoundInCodeRangeForRussianDatabase:
+		return proto.PhoneValidateError_NUMBER_NOT_FOUND_IN_CODE_RANGE_FOR_RUSSIAN_DATABASE
+	default:
+		return proto.PhoneValidateError_OTHER_ERROR
+	}
 }
 
 // Check returns canonical phone format, provider or country for phone
 func (v *Validator) Check(number string) (string, string, error) {
+	return v.check(number)
+}
+
+func (v *Validator) check(number string) (string, string, error) {
 	num := make([]rune, 0, 12)
 	// clean number
 	for i := range number {
