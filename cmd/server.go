@@ -12,7 +12,6 @@ import (
 	"net"
 	"os"
 	"os/exec"
-	"time"
 )
 
 var (
@@ -48,33 +47,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	phones := []string{
-		"+79066460826",
-		"(910)563-82-56",
-		"8-900-905-57-69",
-		"123",
-		"4912984710",
-		"8002242222",
-		"+8940984093",
-		"4952242222",
-		"81234567890",
-		"88005555550",
-		"8000000000",
-		"+19004561244",
-	}
-	start := time.Now()
-	for i := range phones {
-		canonical, provider, err := phoneValid.Check(phones[i])
-		if err != nil {
-			fmt.Printf("Phone %s check error: '%s'\n", phones[i], err)
-			continue
-		}
-		fmt.Printf("Phone %s\tcanonical format %s\tprovider %s\n", phones[i], canonical, provider)
-	}
-	fmt.Printf("Time to find %s\n", time.Since(start))
-
-	return
 
 	l, err := net.Listen("tcp", listenAddress)
 	if err != nil {
