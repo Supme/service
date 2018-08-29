@@ -75,17 +75,19 @@ func (v *Validator) StreamValidate(in proto.Phone_StreamValidateServer) error {
 
 func (v *Validator) Validate(ctx context.Context, in *proto.PhoneValidateRequest) (*proto.PhoneValidateReply, error) {
 	valid := false
-	canonnical, provider, err := v.check(in.Number)
+	canonical, provider, err := v.check(in.Number)
 	if err == nil {
 		valid = true
 	}
-	return &proto.PhoneValidateReply{
+
+	resp := proto.PhoneValidateReply{
 		Id:        in.Id,
 		Valid:     valid,
-		Canonical: canonnical,
+		Canonical: canonical,
 		Provider:  provider,
 		Error:     phoneErrorToProtoError(err),
-	}, nil
+	}
+	return &resp, nil
 }
 
 func phoneErrorToProtoError(err error) proto.PhoneValidateError {

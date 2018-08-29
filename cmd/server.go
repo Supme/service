@@ -48,6 +48,24 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//// ------------- test phone validator -----------
+	//phones := []string{
+	//	// Kazahstan
+	//	"+77122123456",
+	//	"+73362212345",
+	//}
+	//start := time.Now()
+	//for i := range phones {
+	//	canonical, provider, err := phoneValid.Check(phones[i])
+	//	if err != nil {
+	//		fmt.Printf("Phone %s check error: '%s'\n", phones[i], err)
+	//		continue
+	//	}
+	//	fmt.Printf("Phone %s\tcanonical format %s\tprovider %s\n", phones[i], canonical, provider)
+	//}
+	//fmt.Printf("Time to find %s\n", time.Since(start))
+	//// ----------------------------------------------
+
 	l, err := net.Listen("tcp", listenAddress)
 	if err != nil {
 		log.Fatalln("can't listen port", err)
