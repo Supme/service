@@ -1,7 +1,44 @@
 package phone
 
+func findCountry(num []rune) string {
+	cKey := getCountryKey()
+	for n := range num {
+		t := make([]string, 0, 150)
+		if n > 4 {
+			break
+		}
+		for k := range cKey {
+			if len(cKey[k]) > n {
+				if num[n] == rune(cKey[k][n]) {
+					t = append(t, cKey[k])
+				}
+			}
+		}
+		if len(t) < 1 {
+			break
+		}
+		cKey = t
+	}
+	if len(cKey) != 1 {
+		return ""
+	}
+	return country[cKey[0]]
+}
+
+var countryKey []string
+
+func getCountryKey() []string {
+	if countryKey == nil {
+		countryKey = make([]string, 0, 250)
+		for k := range country {
+			countryKey = append(countryKey, k)
+		}
+	}
+	return countryKey
+}
+
 var country = map[string]string{
-	`7`:    `Россия | Казахстан`,
+	`7`:    `Россия`,
 	`61`:   `Австралия`,
 	`43`:   `Австрия`,
 	`994`:  `Азербайджан`,

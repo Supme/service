@@ -115,7 +115,7 @@ func (v *Validator) Check(number string) (string, string, error) {
 }
 
 func (v *Validator) check(number string) (string, string, error) {
-	num := make([]rune, 0, 12)
+	num := make([]rune, 0, 15)
 	// clean number
 	for i := range number {
 		if unicode.IsDigit(rune(number[i])) || rune(number[i]) == '+' {
@@ -134,13 +134,22 @@ func (v *Validator) check(number string) (string, string, error) {
 		return v.ruBase.find(num[1:])
 	}
 
-	if num[0] == '+' {
-		switch num[1] {
+	if num[0] == '+' || num[0] == '0' {
+		var phoneNum []rune
+		if num[0] == '0' && num[1] == '0' {
+			phoneNum = num[2:]
+		} else {
+			phoneNum = num[1:]
+		}
+		c := findCountry(phoneNum)
+		switch c {
 		// is Russia prefix?
-		case '7':
-			return v.ruBase.find(num[2:])
-		default:
+		case "Россия":
+			return v.ruBase.find(phoneNum[1:])
+		case "":
 			return "", "", errDontKnowCountryCode
+		default:
+			return "+" + string(phoneNum), c, nil
 		}
 	}
 	return "", "", errDontKnowPhone
