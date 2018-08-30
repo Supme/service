@@ -1,40 +1,18 @@
 package phone
 
 func findCountry(num []rune) string {
-	cKey := getCountryKeys()
-	for n := range num {
-		t := make([]string, 0, 150)
-		if n > 4 {
-			break
-		}
-		for k := range cKey {
-			if len(cKey[k]) > n {
-				if num[n] == rune(cKey[k][n]) {
-					t = append(t, cKey[k])
-				}
-			}
-		}
-		if len(t) < 1 {
-			break
-		}
-		cKey = t
-	}
-	if len(cKey) != 1 {
+	if len(num) < 4 {
 		return ""
 	}
-	return country[cKey[0]]
-}
-
-var countryKeys []string
-
-func getCountryKeys() []string {
-	if countryKeys == nil {
-		countryKeys = make([]string, 0, 250)
-		for k := range country {
-			countryKeys = append(countryKeys, k)
+	var cod string
+	for k := range country {
+		if k == string(num[:len(k)]) {
+			if len(cod) < len(k) {
+				cod = k
+			}
 		}
 	}
-	return countryKeys
+	return country[cod]
 }
 
 var country = map[string]string{

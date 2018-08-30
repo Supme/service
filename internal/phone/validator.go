@@ -111,7 +111,7 @@ func (v *Validator) check(number string) (string, string, error) {
 		return "", "", errWrongLenghtNumber
 	}
 	// Russia default country
-	if len(num) == 10 {
+	if len(num) == 10 && (num[0] != '+' || num[0] != '0') {
 		return v.ruBase.Find(num)
 	}
 	// default prefix in Russia
@@ -121,6 +121,7 @@ func (v *Validator) check(number string) (string, string, error) {
 
 	if num[0] == '+' || num[0] == '0' {
 		var phoneNum []rune
+		// remove prefix
 		if num[0] == '0' && num[1] == '0' {
 			phoneNum = num[2:]
 		} else {
@@ -130,7 +131,10 @@ func (v *Validator) check(number string) (string, string, error) {
 		switch c {
 		// is Russia prefix?
 		case "Россия":
-			return v.ruBase.Find(phoneNum[1:11])
+			if len(phoneNum) > 11 {
+				return "", "", errWrongLenghtNumber
+			}
+			return v.ruBase.Find(phoneNum[1:])
 		case "":
 			return "", "", errDontKnowCountryCode
 		default:
