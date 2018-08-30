@@ -1,7 +1,7 @@
 package phone
 
 func findCountry(num []rune) string {
-	cKey := getCountryKey()
+	cKey := getCountryKeys()
 	for n := range num {
 		t := make([]string, 0, 150)
 		if n > 4 {
@@ -25,16 +25,16 @@ func findCountry(num []rune) string {
 	return country[cKey[0]]
 }
 
-var countryKey []string
+var countryKeys []string
 
-func getCountryKey() []string {
-	if countryKey == nil {
-		countryKey = make([]string, 0, 250)
+func getCountryKeys() []string {
+	if countryKeys == nil {
+		countryKeys = make([]string, 0, 250)
 		for k := range country {
-			countryKey = append(countryKey, k)
+			countryKeys = append(countryKeys, k)
 		}
 	}
-	return countryKey
+	return countryKeys
 }
 
 var country = map[string]string{

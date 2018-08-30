@@ -145,7 +145,7 @@ func (v *Validator) check(number string) (string, string, error) {
 		switch c {
 		// is Russia prefix?
 		case "Россия":
-			return v.ruBase.find(phoneNum[1:])
+			return v.ruBase.find(phoneNum[1:11])
 		case "":
 			return "", "", errDontKnowCountryCode
 		default:
