@@ -33,7 +33,7 @@ var (
 func NewValidator() (*Validator, error) {
 	validator := new(Validator)
 	var err error
-	validator.ruBase, err = NewRussian()
+	validator.ruBase, err = NewRussian(43200)
 	if err != nil {
 		return nil, err
 	}
