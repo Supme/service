@@ -67,10 +67,10 @@ func (e *Validator) Validate(ctx context.Context, in *proto.EmailValidateRequest
 
 func (e *Validator) validate(email string) (string, proto.EmailValidateError) {
 	var eml, domain string
-	s := strings.TrimSpace(email)
+	s := strings.Replace(strings.ToLower(strings.Trim(email, " \t\r\n.,!?#&^*%{}[]|")), " ", "", -1)
 	if m := splitEmailRe.FindStringSubmatch(s); m != nil && len(m) == 3 {
-		eml = strings.ToLower(strings.TrimSpace(m[1]))
-		domain = strings.TrimRight(strings.ToLower(strings.TrimSpace(m[2])), ".")
+		eml = m[1]
+		domain = m[2]
 	} else {
 		return "", proto.EmailValidateError_BAD_FORMAT
 	}
@@ -80,7 +80,7 @@ func (e *Validator) validate(email string) (string, proto.EmailValidateError) {
 		return "", proto.EmailValidateError_BAD_FORMAT
 	}
 
-	canonicalizeEmail := strings.ToLower(eml + "@" + domain)
+	canonicalizeEmail := eml + "@" + domain
 
 	_, err = dnsCache.Get(punycode)
 	protoErr := dnsErrorToProtoError(err)
