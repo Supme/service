@@ -157,7 +157,7 @@ func (b *russian) parseRuBase(bases map[string]string) (map[int][]line, error) {
 func (b *russian) updateRuBase(bases map[string]string) error {
 	log.Print("start update russian base")
 	for k, v := range bases {
-		if fileInfo, err := os.Stat(k); os.IsNotExist(err) || fileInfo.ModTime().Add(b.update-(time.Second*30)).Unix() < time.Now().Unix() {
+		if fileInfo, err := os.Stat(k); os.IsNotExist(err) || fileInfo.ModTime().Add(b.update+(time.Second*59)).Unix() < time.Now().Unix() {
 			//log.Printf("start download russian csv base %s\n", k)
 			resp, err := http.Get(v)
 			if err != nil {
