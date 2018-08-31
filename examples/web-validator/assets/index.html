@@ -9,61 +9,80 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
-<!--Phone validator-->
-<form class="form-horizontal" autocomplete="off">
-    <fieldset>
+<div style="width: 100%">
+    <!--Phone validator-->
+    <form class="form-horizontal" autocomplete="off">
+        <fieldset>
 
-        <!-- Form Name -->
-        <legend>Phone validator</legend>
+            <!-- Form Name -->
+            <legend>Phone validator</legend>
 
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="single_phone">Single phone validate</label>
-            <div class="col-md-6">
-                <input id="single_phone" name="single_phone" type="text" placeholder="+71234567890" class="form-control input-md">
-                <span id="single_phone_help" class="help-block">Enter you phone number for validate</span>
+            <!-- Text input-->
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="single_phone">Single phone validate</label>
+                <div class="col-md-4">
+                    <input id="single_phone" name="single_phone" type="text" placeholder="+71234567890" class="form-control input-md">
+                    <span id="single_phone_help" class="help-block">Enter you phone number for validate</span>
+                </div>
             </div>
-        </div>
+        </fieldset>
+    </form>
 
-        <!-- File Button
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="phone_file">File stream validate</label>
+    <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/phone/file">
+        <fieldset>
+            <!-- Form Name -->
+            <legend>Phone file validator</legend>
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="email_file">File for stream validate</label>
+                <div class="col-md-4">
+                    <input id="phone_file" name="phone_file" class="input-file" type="file">
+                </div>
+            </div>
+
+            <label class="col-md-4 control-label">First column is ID, second is PhoneNumber, delimiter ';'</label>
             <div class="col-md-4">
-                <input id="phone_file" name="phone_file" class="input-file" type="file">
+                <button type="submit" class="btn btn-primary">Get result</button>
             </div>
-        </div>
-        -->
+        </fieldset>
+    </form>
 
-    </fieldset>
-</form>
+    <!--Email validator-->
+    <form class="form-horizontal"  autocomplete="off">
+        <fieldset>
 
-<!--Email validator-->
-<form class="form-horizontal"  autocomplete="off">
-    <fieldset>
+            <!-- Form Name -->
+            <legend>Email validator</legend>
 
-        <!-- Form Name -->
-        <legend>Email validator</legend>
-
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="single_email">Single email validate</label>
-            <div class="col-md-6">
-                <input id="single_email" name="single_email" type="text" placeholder="test@domain.tld" class="form-control input-md">
-                <span id="single_email_help" class="help-block">Enter you email for validate</span>
+            <!-- Text input-->
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="single_email">Single email validate</label>
+                <div class="col-md-4">
+                    <input id="single_email" name="single_email" type="text" placeholder="test@domain.tld" class="form-control input-md">
+                    <span id="single_email_help" class="help-block">Enter you email for validate</span>
+                </div>
             </div>
-        </div>
+        </fieldset>
+    </form>
 
-        <!-- File Button
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="email_file">File stream validate</label>
+    <form class="form-horizontal" enctype="multipart/form-data" method="post" action="/email/file">
+        <fieldset>
+            <!-- Form Name -->
+            <legend>Email file validator</legend>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="email_file">File for stream validate</label>
+                <div class="col-md-4">
+                    <input id="email_file" name="email_file" class="input-file" type="file">
+                </div>
+            </div>
+
+            <label class="col-md-4 control-label">First column is ID, second is Email, delimiter ';'</label>
             <div class="col-md-4">
-                <input id="email_file" name="email_file" class="input-file" type="file">
+                <button type="submit" class="btn btn-primary">Get result</button>
             </div>
-        </div>
-        -->
-
-    </fieldset>
-</form>
+        </fieldset>
+    </form>
+</div>
 
 <script language="JavaScript">
     $('#single_phone').keyup(function (e){
