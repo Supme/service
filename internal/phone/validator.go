@@ -42,6 +42,9 @@ func NewValidator() (*Validator, error) {
 
 func (v *Validator) StreamValidate(in proto.Phone_StreamValidateServer) error {
 	for {
+		if in.Context().Err() != nil {
+			break
+		}
 		r, err := in.Recv()
 		if err == io.EOF {
 			break

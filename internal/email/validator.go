@@ -34,6 +34,9 @@ func NewValidator(maxWorkers, dnsCacheExpirationSecond int) *Validator {
 func (e *Validator) StreamValidate(in proto.Email_StreamValidateServer) error {
 	wg := &sync.WaitGroup{}
 	for {
+		if in.Context().Err() != nil {
+			break
+		}
 		v, err := in.Recv()
 		if err == io.EOF {
 			break

@@ -74,7 +74,7 @@ func main() {
 	server := grpc.NewServer()
 
 	proto.RegisterTransliterationServer(server, translit.NewTr())
-	proto.RegisterEmailServer(server, email.NewValidator(100, 3600))
+	proto.RegisterEmailServer(server, email.NewValidator(500, 86400))
 	proto.RegisterPhoneServer(server, phoneValid)
 
 	log.Printf("starting server at %s", listenAddress)
