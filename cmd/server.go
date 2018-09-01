@@ -1,17 +1,20 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"github.com/supme/service/internal/email"
 	"github.com/supme/service/internal/phone"
-	"github.com/supme/service/internal/translit"
 	"github.com/supme/service/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/tap"
 	"log"
 	"net"
 	"os"
 	"os/exec"
+	"time"
 )
 
 var (
@@ -48,35 +51,47 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//// ------------- test phone validator -----------
-	//phones := []string{
-	//	// Kazahstan
-	//	"+77122123456",
-	//	"+73362212345",
-	//}
-	//start := time.Now()
-	//for i := range phones {
-	//	canonical, provider, err := phoneValid.Check(phones[i])
-	//	if err != nil {
-	//		fmt.Printf("Phone %s check error: '%s'\n", phones[i], err)
-	//		continue
-	//	}
-	//	fmt.Printf("Phone %s\tcanonical format %s\tprovider %s\n", phones[i], canonical, provider)
-	//}
-	//fmt.Printf("Time to find %s\n", time.Since(start))
-	//// ----------------------------------------------
-
 	l, err := net.Listen("tcp", listenAddress)
 	if err != nil {
 		log.Fatalln("can't listen port", err)
 	}
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		grpc.UnaryInterceptor(authInterceptor),
+		grpc.StreamInterceptor(authStreamInterceptor),
+		grpc.InTapHandle(rateLimiter),
+	)
 
-	proto.RegisterTransliterationServer(server, translit.NewTr())
 	proto.RegisterEmailServer(server, email.NewValidator(500, 86400))
 	proto.RegisterPhoneServer(server, phoneValid)
 
 	log.Printf("starting server at %s", listenAddress)
 	log.Fatal(server.Serve(l))
+}
+
+func authInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	start := time.Now()
+	reply, err := handler(ctx, req)
+	fmt.Printf("time=%v token=%v\n", time.Since(start), getToken(ctx))
+	return reply, err
+}
+
+func authStreamInterceptor(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	start := time.Now()
+	err := handler(srv, stream)
+	fmt.Printf("time=%v token=%v\n", time.Since(start), getToken(stream.Context()))
+	return err
+}
+
+func getToken(ctx context.Context) []string {
+	md, _ := metadata.FromIncomingContext(ctx)
+	client := md.Get("access-token")
+	return client
+}
+
+func rateLimiter(ctx context.Context, info *tap.Info) (context.Context, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	client := md.Get(":authority")
+	fmt.Printf("-- rate limit check data %s authority %v\n", info.FullMethodName, client)
+	return ctx, nil
 }

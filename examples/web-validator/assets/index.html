@@ -89,6 +89,7 @@
         phoneValidate();
     });
     function phoneValidate() {
+        $('#single_phone_help').text("validate...");
         var num = $('#single_phone').val();
         $.ajax({
             dataType: "json",
@@ -139,6 +140,7 @@
         emailValidate();
     });
     function emailValidate() {
+        $('#single_email_help').text("validate...");
         var email = $('#single_email').val();
         $.ajax({
             dataType: "json",
