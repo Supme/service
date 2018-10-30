@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"sync"
+	"unicode/utf8"
 )
 
 func PhoneSingleHandler(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +128,7 @@ func PhoneFileHandler(w http.ResponseWriter, r *http.Request) {
 			if len(csvData[i]) < 2 {
 				continue
 			}
-			id, number := csvData[i][0], csvData[i][1]
+			id, number := cutNonUtf8(csvData[i][0]), cutNonUtf8(csvData[i][1])
 			req := proto.PhoneValidateRequest{Id: id, Number: number}
 			//fmt.Printf("<- %+v", req)
 			err := streamValidatePhone.Send(&req)
@@ -217,7 +218,7 @@ func EmailFileHandler(w http.ResponseWriter, r *http.Request) {
 			if len(csvData[i]) < 2 {
 				continue
 			}
-			id, email := csvData[i][0], csvData[i][1]
+			id, email := cutNonUtf8(csvData[i][0]), cutNonUtf8(csvData[i][1])
 			req := proto.EmailValidateRequest{Id: id, Email: email}
 			err := streamValidateEmail.Send(&req)
 			if err != nil {
@@ -253,4 +254,14 @@ func EmailFileHandler(w http.ResponseWriter, r *http.Request) {
 		wg.Done()
 	}()
 	wg.Wait()
+}
+
+func cutNonUtf8(s string) string {
+	var r []rune
+	for i := range s {
+		if utf8.ValidRune(rune(s[i])) {
+			r = append(r, rune(s[i]))
+		}
+	}
+	return string(r)
 }
