@@ -23,10 +23,10 @@ type russian struct {
 func NewRussian(updateMin int) (*russian, error) {
 	b := new(russian)
 	bases := map[string]string{
-		"ABC-3x.csv": "http://www.rossvyaz.ru/docs/articles/ABC-3x.csv",
-		"ABC-4x.csv": "http://www.rossvyaz.ru/docs/articles/ABC-4x.csv",
-		"ABC-8x.csv": "http://www.rossvyaz.ru/docs/articles/ABC-8x.csv",
-		"DEF-9x.csv": "http://www.rossvyaz.ru/docs/articles/DEF-9x.csv",
+		"ABC-3x.csv": "http://www.rossvyaz.ru/docs/articles/Kody_ABC-3kh.csv",
+		"ABC-4x.csv": "http://www.rossvyaz.ru/docs/articles/Kody_ABC-4kh.csv",
+		"ABC-8x.csv": "http://www.rossvyaz.ru/docs/articles/Kody_ABC-8kh.csv",
+		"DEF-9x.csv": "http://www.rossvyaz.ru/docs/articles/Kody_DEF-9kh.csv",
 	}
 	b.update = time.Duration(updateMin) * time.Minute
 	if b.update != 0 {
