@@ -45,7 +45,9 @@ func NewRussian(updateMin int) (*russian, error) {
 			}
 		}(b)
 	} else {
-		b.parseRuBase(bases)
+		if _, err := b.parseRuBase(bases); err != nil {
+			return nil, err
+		}
 	}
 	return b, nil
 }
@@ -112,7 +114,7 @@ func (b *russian) parseRuBase(bases map[string]string) (map[int][]line, error) {
 			i++
 			if len(rec) < 5 {
 				return nil, fmt.Errorf("file %s has wrong line %d", k, i)
-				continue
+				//continue
 			}
 			f1, err := strconv.Atoi(rec[0])
 			if err != nil {
@@ -132,7 +134,7 @@ func (b *russian) parseRuBase(bases map[string]string) (map[int][]line, error) {
 			}
 			if (f3 - f2 + 1) != f4 {
 				return nil, fmt.Errorf("file %s has wrong count number in line %d (%d-%d+1) != %d", k, i, f3, f2, f4)
-				continue
+				//continue
 			}
 			var f5 string
 			if len(rec) == 6 {
