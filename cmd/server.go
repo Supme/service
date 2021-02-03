@@ -14,7 +14,6 @@ import (
 	"net"
 	"os"
 	"os/exec"
-	"time"
 )
 
 var (
@@ -70,16 +69,16 @@ func main() {
 }
 
 func authInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	start := time.Now()
+	//start := time.Now()
 	reply, err := handler(ctx, req)
-	fmt.Printf("time=%v token=%v\n", time.Since(start), getToken(ctx))
+	//fmt.Printf("time=%v token=%v\n", time.Since(start), getToken(ctx))
 	return reply, err
 }
 
 func authStreamInterceptor(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	start := time.Now()
+	//start := time.Now()
 	err := handler(srv, stream)
-	fmt.Printf("time=%v token=%v\n", time.Since(start), getToken(stream.Context()))
+	//fmt.Printf("time=%v token=%v\n", time.Since(start), getToken(stream.Context()))
 	return err
 }
 
@@ -90,8 +89,8 @@ func getToken(ctx context.Context) []string {
 }
 
 func rateLimiter(ctx context.Context, info *tap.Info) (context.Context, error) {
-	md, _ := metadata.FromIncomingContext(ctx)
-	client := md.Get(":authority")
-	fmt.Printf("-- rate limit check data %s authority %v\n", info.FullMethodName, client)
+	//md, _ := metadata.FromIncomingContext(ctx)
+	//client := md.Get(":authority")
+	//fmt.Printf("-- rate limit check data %s authority %v\n", info.FullMethodName, client)
 	return ctx, nil
 }

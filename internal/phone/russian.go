@@ -1,10 +1,11 @@
 package phone
 
 import (
+	"crypto/tls"
 	"encoding/csv"
 	"fmt"
-	"golang.org/x/text/encoding/charmap"
-	"golang.org/x/text/transform"
+	//"golang.org/x/text/encoding/charmap"
+	//"golang.org/x/text/transform"
 	"io"
 	"log"
 	"net/http"
@@ -23,10 +24,10 @@ type russian struct {
 func NewRussian(updateMin int) (*russian, error) {
 	b := new(russian)
 	bases := map[string]string{
-		"ABC-3x.csv": "http://www.rossvyaz.ru/docs/articles/Kody_ABC-3kh.csv",
-		"ABC-4x.csv": "http://www.rossvyaz.ru/docs/articles/Kody_ABC-4kh.csv",
-		"ABC-8x.csv": "http://www.rossvyaz.ru/docs/articles/Kody_ABC-8kh.csv",
-		"DEF-9x.csv": "http://www.rossvyaz.ru/docs/articles/Kody_DEF-9kh.csv",
+		"ABC-3x.csv": "https://rossvyaz.gov.ru/data/ABC-3xx.csv",
+		"ABC-4x.csv": "https://rossvyaz.gov.ru/data/ABC-4xx.csv",
+		"ABC-8x.csv": "https://rossvyaz.gov.ru/data/ABC-8xx.csv",
+		"DEF-9x.csv": "https://rossvyaz.gov.ru/data/DEF-9xx.csv",
 	}
 	b.update = time.Duration(updateMin) * time.Minute
 	if b.update != 0 {
@@ -160,8 +161,12 @@ func (b *russian) updateRuBase(bases map[string]string) error {
 	log.Print("start update russian base")
 	for k, v := range bases {
 		if fileInfo, err := os.Stat(k); os.IsNotExist(err) || fileInfo.ModTime().Add(b.update+(time.Second*59)).Unix() < time.Now().Unix() {
-			//log.Printf("start download russian csv base %s\n", k)
-			resp, err := http.Get(v)
+			log.Printf("start download russian csv base %s\n", k)
+			tr := &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			}
+			client := &http.Client{Transport: tr}
+			resp, err := client.Get(v)
 			if err != nil {
 				return err
 			}
@@ -177,8 +182,9 @@ func (b *russian) updateRuBase(bases map[string]string) error {
 				return err
 			}
 			defer file.Close()
-			body := transform.NewReader(resp.Body, charmap.Windows1251.NewDecoder())
-			_, err = io.Copy(file, body)
+			//body := transform.NewReader(resp.Body, charmap.Windows1251.NewDecoder())
+			//_, err = io.Copy(file, body)
+			_, err = io.Copy(file, resp.Body)
 			if err != nil {
 				if _, err := os.Stat("~" + k); !os.IsNotExist(err) {
 					os.Rename("~"+k, k)
